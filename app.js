@@ -32,19 +32,21 @@ for (let i = 0; i < 8; i++)
         const y3 = cy + (radius*3) * Math.sin(angle);
         octpoints3.push([x3, y3]);
     }
-    var zone1hour, zone2hour, zone3hour;
-  
+var zone1hour, zone2hour, zone3hour;
+//console.log("hi");
 
 //find the /8 time zones
 function zones(hours)
 {
     switch (Math.ceil(hours / 8)) {
         case 1:
-            if(hours===8)
+            if(hours==8)
             {
-                zone3hour = 1;
+                zone3hour = 8;
                 zone2hour = 0;
                 zone1hour = 0;
+                
+
 
             }
             else
@@ -57,15 +59,34 @@ function zones(hours)
             break;
     
         case 2:
-            zone3hour = 1;
-            zone2hour = hours % 8;
+        if(hours==16)
+        {
+            zone3hour = 8;
+            zone2hour = 8;
             zone1hour = 0;
-            break;
+           
+        }
+        else
+            {
+            zone3hour = 8;
+            zone2hour = hours % 8;
+            zone1hour = 0; 
+            }
+        break;
     
         case 3:
-            zone3hour = 1;
-            zone2hour = 1;
-            zone1hour = hours % 8;
+            if(hours==24)
+                {
+                    zone3hour = 8;
+                    zone2hour = 8;
+                    zone1hour = 8;
+                }
+            else
+                {
+                zone3hour = 8;
+                zone2hour = 8;
+                zone1hour = hours % 8; 
+                }
             break;
     
        
@@ -78,38 +99,9 @@ function drawOcts(octpoints, oct, colour)
     oct
     .attr('d', `M${octpoints.map(p => p.join(',')).join('L')}Z`)
     .attr('fill', colour);
-   // .attr('opacity', 0.5);
+   
 }
-// function drawMinutes(minutes, radius)
-// {
-//     var minpoints = []; // Clear previous points
-  
-//         // Generate points for the hour_normalised segments
-//     for (var i = 0; i <= minutes; i++) {
-//         const x = cx + radius * Math.cos(angle);
-//         const y = cy + radius * Math.sin(angle);
-//         minpoints.push([x, y]);
-//         angle += (Math.PI / (4*60)); // Angle for each vertex
-//     }
-
-//     // Ensure the path data string is correct
-//     let pathData = `M${triangleCenter.join(',')}`;  // Move to the center point
-    
-//     // Draw lines to each hour point
-//     for (var i = 0; i < minpoints.length; i++) {
-//         pathData += `L${minpoints[i].join(',')}`;
-//     }
-    
-    
-//     // Close the polygon by connecting the last point back to the first
-//     pathData += 'Z';
-
-//     // Append a new path for each call without removing old ones
-//     svg.append('path')
-//        .attr('d', pathData)
-//        .attr('fill', 'white')
-//        .attr('opacity', 0.7);
-//  }
+//var minpoints=[];
 
 function loop()
  {
@@ -117,29 +109,23 @@ function loop()
     const hours = date.getHours();
     const minutes = date.getMinutes();
     const seconds = date.getSeconds();
-   //const mili = date.getMilliseconds();
+  
     const delta = (Date.now() - initialTime);
     timestamp.html(`${hours}:${minutes}:${seconds} [Frame: ${delta}]`)
-   
 
     zones(hours);
     const oct1 = null, oct2 = null, oct3 = null;
 
     drawOcts(octpoints3, oct3, 'purple');
     drawHours(zone3hour, (radius*3));
-   // drawMinutes(minutes, radius*3 );
-
-
+    //add minutes here later
+       
   
     drawOcts(octpoints2, oct2, 'teal');
     drawHours(zone2hour, (radius*2));
 
-
-
     drawOcts(octpoints1, oct1, 'black');
     drawHours(zone1hour, radius );
-
-
 
     window.requestAnimationFrame(loop);
 }
@@ -147,39 +133,38 @@ function loop()
 loop();
 
 
-function drawHours(hour_normalised, radius) {
+function drawHours(hour_normalised, radius) 
+{   
+var angle = 3 * Math.PI / 2;//12oclock point
+var hourpoints = []; // Clear previous points
+
+    // Generate points for the hour_normalised segments
+for (var i = 0; i <= hour_normalised; i++) {
+    const x = cx + radius * Math.cos(angle);
+    const y = cy + radius * Math.sin(angle);
+    hourpoints.push([x, y]);
+    angle += (Math.PI / 4); // Angle for each vertex
+}
+
+// Ensure the path data string is correct
+let pathData = `M${triangleCenter.join(',')}`;  // Move to the center point
+
+// Draw lines to each hour point
+for (var i = 0; i < hourpoints.length; i++) {
+    pathData += `L${hourpoints[i].join(',')}`;
+}
 
 
-   
-        var angle = 3 * Math.PI / 2;
-        var hourpoints = []; // Clear previous points
-      
-            // Generate points for the hour_normalised segments
-        for (var i = 0; i <= hour_normalised; i++) {
-            const x = cx + radius * Math.cos(angle);
-            const y = cy + radius * Math.sin(angle);
-            hourpoints.push([x, y]);
-            angle += (Math.PI / 4); // Angle for each vertex
-        }
-    
-        // Ensure the path data string is correct
-        let pathData = `M${triangleCenter.join(',')}`;  // Move to the center point
-        
-        // Draw lines to each hour point
-        for (var i = 0; i < hourpoints.length; i++) {
-            pathData += `L${hourpoints[i].join(',')}`;
-        }
-        
-        
-        // Close the polygon by connecting the last point back to the first
-        pathData += 'Z';
-    
-        // Append a new path for each call without removing old ones
-        svg.append('path')
-           .attr('d', pathData)
-           .attr('fill', 'white')
-           .attr('opacity', 0.7);
-        }
+// Close the polygon by connecting the last point back to the first
+pathData += 'Z';
+
+// Append a new path for each call without removing old ones
+svg.append('path')
+    .attr('d', pathData)
+    .attr('fill', 'white')
+    .attr('opacity', 0.7);
+       
+ }
     
     
     
