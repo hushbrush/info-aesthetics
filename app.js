@@ -33,6 +33,35 @@ for (let i = 0; i < 8; i++)
         const y3 = cy + (radius*3) * Math.sin(angle);
         octpoints3.push([x3, y3]);
     }
+    var zone1hour, zone2hour, zone3hour;
+  
+
+//find the /8 time zones
+function zones(hours)
+{
+    switch (Math.floor(hours / 8)) {
+        case 0:
+            zone3hour = hours % 8;
+            zone2hour = 0;
+            zone1hour = 0;
+            break;
+    
+        case 1:
+            zone3hour = 1;
+            zone2hour = hours % 8;
+            zone1hour = 0;
+            break;
+    
+        case 2:
+            zone3hour = 1;
+            zone2hour = 1;
+            zone1hour = hours % 8;
+            break;
+    
+       
+    }
+}
+
 
 function loop()
  {
@@ -40,41 +69,12 @@ function loop()
     const hours = date.getHours();
     const minutes = date.getMinutes();
     const seconds = date.getSeconds();
-    const mili = date.getMilliseconds();
+   //const mili = date.getMilliseconds();
     const delta = (Date.now() - initialTime);
+    timestamp.html(`${hours}:${minutes}:${seconds} [Frame: ${delta}]`)
+    const tri =svg.append("path");
 
-    var zone1hour, zone2hour, zone3hour;
-  
-    
-   timestamp.html(`${hours}:${minutes}:${seconds} [Frame: ${delta}]`)
-   const tri =svg.append("path");
-
-    switch (Math.floor(hours / 8)) {
-        case 0:
-            zone1hour = hours % 8;
-            zone2hour = 0;
-            zone3hour = 0;
-            break;
-    
-        case 1:
-            zone1hour = 1;
-            zone2hour = hours % 8;
-            zone3hour = 0;
-            break;
-    
-        case 2:
-            zone1hour = 1;
-            zone2hour = 1;
-            zone3hour = hours % 8;
-            break;
-    
-        default:
-            // Just in case hours is outside the expected range
-            zone1hour = 0;
-            zone2hour = 0;
-            zone3hour = 0;
-            break;
-    }
+    zones(5);
     
 
     
@@ -104,7 +104,7 @@ function loop()
 
 
    drawHours(zone1hour, radius );
-
+console.log(zone1hour, zone2hour, zone3hour)
 
 
     window.requestAnimationFrame(loop);
