@@ -11,7 +11,7 @@ const svg= clock.append('svg')
 .attr('viewBox', '0 0 1920 1080')
 .attr('width', 1920)
 .attr('height', 1080);
-console.log("zone 1 hour: " );
+
 const octpoints1 = [];
 const octpoints2 = [];
 const octpoints3 = [];
@@ -19,10 +19,9 @@ const hourpoints = [];
 var radius=100, cx=960, cy=540;
 const triangleCenter = [cx, cy];
 var zone1hour, zone2hour, zone3hour;
-
-
 function zones(hours)
 {
+    console.log("zone 1 hour: " +zone1hour);
     switch (floor(hours/3))
     {
         case 1:
