@@ -18,47 +18,9 @@ const octpoints3 = [];
 const hourpoints = [];
 var radius=100, cx=960, cy=540;
 const triangleCenter = [cx, cy];
-var zone1hour, zone2hour, zone3hour;
-function zones(hours)
-{
-    console.log("zone 1 hour: " +zone1hour);
-    switch (floor(hours/3))
-    {
-        case 1:
-            {
-             zone1hour=hours%8;
-             zone2hour=0;
-             zone3hour=0;
-            }
-        case 2:
-            {
-                zone1hour=1;
-                zone2hour=hours%8;
-                zone3hour=0;
-            }
-        case 3:
-            {
-                zone1hour=1;
-                zone2hour=1;
-                zone3hour=hours%8;
-            }
-    }   
 
-}
-
-
-
-function loop()
- {
-    const date = new Date();
-    const hours = date.getHours();
-    const delta = (Date.now() - initialTime);
-    timestamp.html(`${hours}:${minutes}:${seconds} [Frame: ${delta}]`);
-    
-    zones(hours);
-    
-
-   for (let i = 0; i < 8; i++)
+//array for the octagons
+for (let i = 0; i < 8; i++)
     {
         const angle = (Math.PI / 4) * i; // Angle for each vertex
         const x = cx + radius * Math.cos(angle);
@@ -71,16 +33,58 @@ function loop()
         const y3 = cy + (radius*3) * Math.sin(angle);
         octpoints3.push([x3, y3]);
     }
-   
 
-    //biggest hence first hence last in the drawing
+function loop()
+ {
+    const date = new Date();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    const mili = date.getMilliseconds();
+    const delta = (Date.now() - initialTime);
+
+    var zone1hour, zone2hour, zone3hour;
+  
+    
+   timestamp.html(`${hours}:${minutes}:${seconds} [Frame: ${delta}]`)
+   const tri =svg.append("path");
+
+    switch (Math.floor(hours / 8)) {
+        case 0:
+            zone1hour = hours % 8;
+            zone2hour = 0;
+            zone3hour = 0;
+            break;
+    
+        case 1:
+            zone1hour = 1;
+            zone2hour = hours % 8;
+            zone3hour = 0;
+            break;
+    
+        case 2:
+            zone1hour = 1;
+            zone2hour = 1;
+            zone3hour = hours % 8;
+            break;
+    
+        default:
+            // Just in case hours is outside the expected range
+            zone1hour = 0;
+            zone2hour = 0;
+            zone3hour = 0;
+            break;
+    }
+    
+
+    
     const oct3= svg.append('path');
     oct3
     .attr('d', `M${octpoints3.map(p => p.join(',')).join('L')}Z`)
     .attr('fill', `purple`)
     .attr('opacity', 0.5);
      
-    drawHours(zone1hour, (radius*3));
+    drawHours(zone3hour, (radius*3));
 
 
     const oct2= svg.append('path');
@@ -89,7 +93,7 @@ function loop()
     .attr('fill', `teal`)
     .attr('opacity', 0.5);
         
-    drawHours(8, (radius*2));
+    drawHours(zone2hour, (radius*2));
 
 
     const oct1= svg.append('path');
@@ -99,7 +103,8 @@ function loop()
     .attr('opacity', 0.5);
 
 
-    drawHours(hour_normalised, radius );
+   drawHours(zone1hour, radius );
+
 
 
     window.requestAnimationFrame(loop);
@@ -129,7 +134,7 @@ function drawHours(hour_normalised, radius)
         svg.append('path')
        .attr('d', `M${triangleCenter.join(',')}L${point1.join(',')}L${point2.join(',')}Z`)
        .attr('fill', 'white')
-       .attr('opacity', 0.6);    
+       .attr('opacity', 0.7);    
         point1=point2;
         point2=hourpoints[i];
         
